@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import UnsplashService from "../service/UnsplashService"
+import GallaryImage from "./GallaryImage";
 import "./GallaryMain.css";
 
 const GallaryMain = () => {
@@ -9,6 +10,14 @@ const GallaryMain = () => {
   console.log("query=",queryKeyword)
   // 1. 사진 URL 들을 저장할 배열 state 를 만든다.
   // 왜 ... 했나요 ? ->
+  /**
+   * 
+   * 비동기로직을 통해 로드된 데이터를을 받아와서 변경해 줄 것이기 때문에, 
+   * 초기 마운트 되고 그 다음에 useEffect를 통해서 데이터를 array에 새롭게 useState를 통해 세팅해주며
+   * 이 로직을 통해서 웹에 보이는 뷰를 바꾸어 줄 것이기 떄문에
+   * 
+   * 
+   */
   const [pictures, setPictures]= useState([])
   // 2. 컴포넌트 렌더 시에 처음에 단 한 번, UnsplashService.getPhotoURLs() 를 이용해 사진 URL 들을 얻어온 다음, state 로 저장한다. (getPhotoURLs() 는 async 함수 임)
   // 왜 ... 했나요 ? ->
@@ -45,7 +54,7 @@ const GallaryMain = () => {
     <input ref={queryKeyword} type="text" value="aa" readOnly/>
     <div>
       {pictures && pictures.length > 0 &&
-        pictures.map(imgurl => <img src={imgurl} onClick={onClickImg}/>)}
+        pictures.map(imgurl => <GallaryImage imgUrl={imgurl} onClickImg={onClickImg}/>)}
     </div>
   </div>;
 };

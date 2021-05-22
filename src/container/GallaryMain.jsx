@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import UnsplashService from "../service/UnsplashService"
 import GallaryImage from "./GallaryImage";
+import {v4} from 'uuid'
 import "./GallaryMain.css";
 
 const GallaryMain = () => {
@@ -55,12 +56,12 @@ const GallaryMain = () => {
    * 이미지 클릭시에 이벤트 값을 받아 타겟의 src를 받아서 (현재 뿌려주는 값이 src이므로)
    * 해당 값을 없애 새롭게 기존 값에 세팅할 수 있도록 구현하였다. 
    */
-
+// uuid 관련 이렇게 쓰는 게 맞을지 고민하게 된 이유 https://stackoverflow.com/questions/52705335/will-using-uuid-to-as-list-keys-cause-unnecessary-re-renders-in-react
   // 4. 3. 에서 만든 JSX 를 리턴!
   return <div className="GallaryMain">
     <div>
       {pictures && pictures.length > 0 ?
-        pictures.map(imgurl => <GallaryImage imgUrl={imgurl} onClickImg={onClickImg}/>)
+        pictures.map(imgurl => <GallaryImage imgUrl={imgurl} onClickImg={onClickImg} key={v4()}/>)
       :
       <p style={{color:"red"}}>이미지가 더 없어요 ! :(</p>
       }

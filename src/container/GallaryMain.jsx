@@ -34,12 +34,8 @@ const GallaryMain = () => {
    */
   useEffect(() => {
     const fetchData = async () => {
-      try{
-        let imgUrls = await UnsplashService.getPhotoURLs(queryKeyword.current) 
-        setPictures(imgUrls)
-      }catch(err){
-        console.error(err)
-      }
+      let imgUrls = await UnsplashService.getPhotoURLs(queryKeyword.current) 
+      setPictures(imgUrls)
     }
     fetchData();
   }, [])

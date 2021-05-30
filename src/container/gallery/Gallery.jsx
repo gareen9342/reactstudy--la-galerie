@@ -17,7 +17,6 @@ const Gallery = () => {
   //
   // 1. 이제 는 image url 만 필요하지 않을 것 같습니다!
   const idx = Math.floor(Math.random() * initPhotos.length);
-  const page = Math.floor(Math.random() * 100) + 1;
   const queryKeyword = useRef(initPhotos[idx]);
   const [pictures, setPictures] = useState([]);
 
@@ -25,7 +24,7 @@ const Gallery = () => {
     (async () => {
       // ** 기존 코드 **
       (async function fetchImageURLs() {
-        let imgUrls = await UnsplashService.get7Photos(queryKeyword.current, page);
+        const imgUrls = await UnsplashService.get7Photos(queryKeyword.current, Math.floor(Math.random() * 100) + 1);
         setPictures(imgUrls);
       })();
       // **************

@@ -8,9 +8,8 @@ const GalleryImageDetails = props => {
     <div className="Gallery__image-detail">
       <h1> {info.description} </h1>
       <h2>{`${info.user.first_name} ${info.user.last_name}`} </h2>
-      <a href={`${info.urls.small}`} target="_blank" rel="noreferrer"> link~ </a>
-      <p> {info.alt_description}</p>
-
+      <a href={info.urls.small} target="_blank" rel="noreferrer"> link~ </a>
+      <p> {info.alt_description} </p>
     </div>
   );
 };

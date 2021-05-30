@@ -3,7 +3,6 @@ import "./Clock.css";
 import React, { useState, useEffect } from "react";
 
 const Clock = () => {
-  //
   const initDate = new Date();
   const [hour, setHour] = useState(initDate.getHours());
   const [minutes, setMinutes] = useState(initDate.getMinutes());

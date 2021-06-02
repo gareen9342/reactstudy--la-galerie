@@ -1,66 +1,51 @@
 import "./Gallery.css";
-import UnsplashService from '../../service/UnsplashService';
-import React, { useState, useEffect, useRef } from "react";
-import PhotoContext from '../../context/PhotoContext';
+
+import { usePhotoContext } from "../../context/PhotoContext";
+
+import React, { useEffect } from "react";
+// import { v4 as uuid } from "uuid";
+import UnsplashService from "../../service/UnsplashService";
 import GalleryImage from "../../component/gallery-image/GalleryImage";
-// 1-1. 뭘 초깃값으로 지정해야 할까요?
-const initPhotos = ["contemporary art", "modern art", "art nouveau", "pop art", "dog", "cat"];
+import { makeRandomQueryKeyword, randRange } from "../../util/Common";
+import { useMemo } from "react";
 
 const Gallery = () => {
-  // ** 기존 코드 **
-  // const [imageURLs, setImageURLs] = useState([]);
-  // **************
-
-  // 이쁜 그림을 치우는 건 너무한 일 같아요.
-  // 그래서 그림에 마우스를 hover 하면 (css 로 구현되어있음)
-  // 이미지에 대한 정보가 pop-up(overlap) 하도록 바꾸려 합니다.
-  //
-  // 1. 이제 는 image url 만 필요하지 않을 것 같습니다!
-  const idx = Math.floor(Math.random() * initPhotos.length);
-  const queryKeyword = useRef(initPhotos[idx]);
-  const [pictures, setPictures] = useState([]);
+  const photosCtx = usePhotoContext();
 
   useEffect(() => {
     (async () => {
-      // ** 기존 코드 **
-      (async function fetchImageURLs() {
-        const imgUrls = await UnsplashService.get7Photos(queryKeyword.current, Math.floor(Math.random() * 100) + 1);
-        setPictures(imgUrls);
-      })();
-      // **************
+      let response = await UnsplashService.get7Photos(
+        makeRandomQueryKeyword(),
+        randRange(1, 100)
+      );
 
-      //
-      // 2. 기존에 불러오던 이미지도 조금 조정하여 그림을 무작위로 가져와봅시다.
-      //
-      // 먼저, UnsplashService.get7Photos() 코드를 보고나서,
-      //
-      // 2-1. query keyword ("contemporary art", "modern art", "art nouveau", "pop art", "dog", "cat")
-      //      중 1 만 랜덤 선택 되도록 queryKeyword 를 구성 하세요.
-      // 2-2. page 를 1 ~ 100 중 랜덤 선택 되도록 조정하세요. (+ 예외 처리 가능)
-      //      
-      // 3. 전부다 구현하셨으면, local state 를 이용하는 조건에서, context 를 이용하도록 바꾸세요. (./src/context/PhotoContext.jsx)
+      if (!response) {
+        console.error("No valid response");
+        return;
+      }
+
+      photosCtx.setPhotos(
+        response.results.map(res => ({
+          id: res.id,
+          title: res.alt_description,
+          author: `${res.user.first_name} ${res.user.last_name}`,
+          description: res.description ?? "No Description",
+          url: res.urls.raw,
+          link: res.links.download,
+        }))
+      );
     })();
   }, []);
 
-
-  return (
-    <PhotoContext.Provider value={pictures.results}>
-      <div className="Gallery">
-        {
-          pictures?.results && pictures.results.map(x =>
-            <GalleryImage
-              key={x.id}
-              id={x.id}
-              url={x.urls.small}
-            />
-          )
-        }
-      </div>
-    </PhotoContext.Provider>
-
+  const imgsJSX = useMemo(
+    () =>
+      photosCtx.photos &&
+      photosCtx.photos.length > 1 &&
+      photosCtx.photos.map(photo => <GalleryImage key={photo.id} {...photo} />),
+    [photosCtx.photos]
   );
+
+  return <div className="Gallery">{imgsJSX}</div>;
 };
 
 export default Gallery;
-
-
